@@ -79,11 +79,7 @@ export default async function HomePage() {
               className="absolute -bottom-3 -right-3 h-24 w-24 border-b-4 border-r-4 border-brand-gold"
               aria-hidden
             />
-            {/* <Image
-              src={"/images/Products/hero-product-image.png"}
-              alt="Hero photograph — Plastic Nivar rolls and monofilament products"
-              className="aspect-[5/4] w-full"
-            /> */}
+
             <Image
               src="/images/Products/hero-product-image.png"
               alt="Plastic Nivar rolls and monofilament products manufactured by Jagruti Plastic"
@@ -191,14 +187,6 @@ export default async function HomePage() {
               key={g.slug}
               className="overflow-hidden rounded-md border border-border bg-white"
             >
-              {/* <Image
-                src={g.link}
-                alt={g.alt}
-                width={1200}
-                height={675}
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="aspect-[16/9] h-auto w-full border-0 border-b object-cover"
-              /> */}
               <Image
                 src={g.link}
                 alt={g.alt}
@@ -224,32 +212,6 @@ export default async function HomePage() {
                 </ul>
               </div>
             </div>
-            // <div
-            //   key={g.slug}
-            //   className="overflow-hidden rounded-md border border-border bg-white"
-            // >
-            //   <Image
-            //     src={`${g.link}`}
-            //     alt={`${g.alt}`}
-            //     priority
-            //     className="aspect-[16/9]  border-0 border-b h-auto w-full rounded-xl object-contain"
-            //   />
-
-            //   <div className="p-5">
-            //     <h3 className="text-lg">{g.product}</h3>
-            //     <ul className="mt-3 space-y-1.5 text-sm text-muted-foreground">
-            //       {g.items.map((i) => (
-            //         <li key={i} className="flex gap-2">
-            //           <Check
-            //             className="mt-0.5 h-4 w-4 shrink-0 text-brand-gold"
-            //             aria-hidden
-            //           />
-            //           {i}
-            //         </li>
-            //       ))}
-            //     </ul>
-            //   </div>
-            // </div>
           ))}
         </div>
         <Button asChild variant="outline" className="mt-8">
