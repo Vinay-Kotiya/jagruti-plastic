@@ -28,14 +28,19 @@ export function ProductMedia({
         className,
       )}
     >
-      <Image
+      <img
+        src={img.url}
+        alt={img.alt || product.name}
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      {/* <Image
         src={img.url}
         alt={img.alt || product.name}
         fill
         priority={priority}
         sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"
         className="object-cover"
-      />
+      /> */}
     </div>
   );
 }
