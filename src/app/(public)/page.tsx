@@ -6,7 +6,7 @@ import {
   Section,
   SectionHeading,
 } from "@/components/common/section";
-import { ImagePlaceholder } from "@/components/common/image-placeholder";
+// import { ImagePlaceholder } from "@/components/common/image-placeholder";
 import { Reveal } from "@/components/common/reveal";
 import { LocationCards, ContactLines } from "@/components/common/contact-cards";
 import { ProductCard } from "@/components/products/product-card";
@@ -20,7 +20,7 @@ import Image from "next/image";
 
 export default async function HomePage() {
   const [site, products] = await Promise.all([getSiteInfo(), listProducts()]);
-  console.log("Products List in Home Page:", products, "site info:", site);
+  // console.log("Products List in Home Page:", products, "site info:", site);
   const highlights = [
     {
       icon: CalendarDays,
