@@ -20,6 +20,7 @@ import Image from "next/image";
 
 export default async function HomePage() {
   const [site, products] = await Promise.all([getSiteInfo(), listProducts()]);
+  console.log("Products List in Home Page:", products, "site info:", site);
   const highlights = [
     {
       icon: CalendarDays,
