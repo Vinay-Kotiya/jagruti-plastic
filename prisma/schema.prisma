@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  // SUPER_ADMIN, CONTENT_MANAGER can be added later
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// Embedded (composite) types: no extra collections needed on MongoDB
+type ProductImage {
+  publicId  String // Cloudinary public_id
+  url       String // Cloudinary secure_url
+  alt       String?
+  sortOrder Int     @default(0)
+}
+
+type Specification {
+  label String
+  value String
+}
+
+type SocialLink {
+  platform String
+  url      String
+}
+
+model Admin {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ProductCategory {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String    @unique
+  description String?
+  sortOrder   Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id               String          @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  slug             String          @unique
+  categoryId       String          @db.ObjectId
+  category         ProductCategory @relation(fields: [categoryId], references: [id])
+  shortDescription String
+  description      String
+  images           ProductImage[]
+  qualities        String[]
+  sizes            String[]
+  colours          String[]
+  specifications   Specification[]
+  applications     String[]
+  featured         Boolean         @default(false)
+  isActive         Boolean         @default(true)
+  seoTitle         String?
+  seoDescription   String?
+  enquiries        Enquiry[]
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@index([categoryId, isActive])
+  @@index([featured, isActive])
+}
+
+model Enquiry {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  customerName  String
+  companyName   String?
+  phone         String
+  email         String?
+  productId     String?       @db.ObjectId
+  product       Product?      @relation(fields: [productId], references: [id], onDelete: SetNull)
+  quality       String?
+  specification String?
+  quantityKg    Int?
+  message       String?
+  status        EnquiryStatus @default(NEW)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([status, createdAt])
+  @@index([productId])
+}
+
+// Singleton document: always read/write key = "primary"
+model CompanyInformation {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  key                  String   @unique @default("primary")
+  name                 String
+  ownerName            String
+  establishedYear      Int
+  gstNumber            String?
+  factoryAddress       String
+  godownAddress        String
+  phones               String[]
+  email                String
+  productionCapacityKg Int
+  description          String
+  updatedAt            DateTime @updatedAt
+}
+
+// Singleton document: MOQ stays hidden until the client confirms the policy
+model SiteSettings {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  key            String       @unique @default("primary")
+  whatsappNumber String
+  moqPublic      Boolean      @default(false)
+  moqNivarKg     Int?
+  moqClothKg     Int?
+  moqCombinedKg  Int?
+  socialLinks    SocialLink[]
+  updatedAt      DateTime     @updatedAt
+}
