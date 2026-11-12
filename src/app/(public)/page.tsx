@@ -160,6 +160,9 @@ export default async function HomePage() {
               <ProductCard product={p} />
             </Reveal>
           ))}
+          {/* {products.slice(0, 4).map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))} */}
         </div>
       </Section>
 
