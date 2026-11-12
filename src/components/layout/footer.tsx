@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone, MessageCircle } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { Logo } from "@/components/common/logo";
 import { Container } from "@/components/common/section";
 import { mainNav, productLinks } from "@/config/navigation";
 import { getSiteInfo } from "@/services/company.service";
 import { enquiryMessage, waLink } from "@/lib/whatsapp";
+import { FaWhatsapp } from "react-icons/fa";
 
 export async function Footer() {
   const s = await getSiteInfo();
@@ -91,7 +92,7 @@ export async function Footer() {
             rel="noopener noreferrer"
             className={`flex items-center gap-2 ${a}`}
           >
-            <MessageCircle className="h-4 w-4 text-brand-red" aria-hidden />
+            <FaWhatsapp className="h-4 w-4 text-brand-red" aria-hidden />
             WhatsApp enquiry
           </a>
         </div>
