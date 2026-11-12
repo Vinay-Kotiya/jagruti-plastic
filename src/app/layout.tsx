@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Manrope } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
+import { getSiteUrl } from "@/lib/site-url";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -15,9 +16,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  ),
+  // metadataBase: new URL(
+  //   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  // ),
+  metadataBase: new URL(getSiteUrl()),
   title: {
     default:
       "Jagruti Plastic | Plastic Nivar & Monofilament Manufacturer, Bhavnagar",

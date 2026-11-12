@@ -242,7 +242,16 @@ export default async function HomePage() {
               <Link href="/manufacturing">Manufacturing</Link>
             </Button>
           </div>
-          <ImagePlaceholder label="Factory photograph — production floor" />
+          {/* <ImagePlaceholder label="Factory photograph — production floor" /> */}
+          <Image
+            src="/images/Products/manufacturing-temp.svg"
+            alt="Factory photograph — production floor"
+            width={1536}
+            height={1024}
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="aspect-[5/4] h-auto w-full rounded-xl object-contain"
+          />
         </div>
       </Section>
 
