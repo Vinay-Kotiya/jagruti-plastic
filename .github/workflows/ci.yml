@@ -1,4 +1,4 @@
-name: Jagruti Plastic CI/CD
+name: Jagruti Plastic CI
 
 on:
   push:
@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-# Cancel superseded runs on the same branch/PR
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -16,77 +15,49 @@ permissions:
 
 env:
   NODE_VERSION: "20"
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
 jobs:
-  # 1. TEST — the project has no unit-test suite yet, so this gate is the strict TypeScript check.
-  #    When you add tests (e.g. Vitest), add `npm test` here.
+  # 1. TypeScript validation
   test:
     name: Test (typecheck)
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
+
       - run: npm ci
       - run: npm run typecheck
 
-  # 2. BUILD — verification build with dummy env values (no real secrets needed in CI).
+  # 2. Production build verification
   build:
     name: Build
     needs: test
     runs-on: ubuntu-latest
+
     env:
       DATABASE_URL: mongodb://localhost:27017/ci-build
       AUTH_SECRET: ci-build-secret-not-used-in-production
       NEXT_PUBLIC_SITE_URL: https://example.com
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-      - run: npm ci
+
       - uses: actions/cache@v4
         with:
           path: .next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**') }}
-          restore-keys: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+
+      - run: npm ci
       - run: npm run build
-
-  # 3a. DEPLOY (preview) — pull requests from this repository
-  deploy-preview:
-    name: Deploy Preview
-    needs: build
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    environment: preview
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm install --global vercel@latest
-      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
-
-  # 3b. DEPLOY (production) — pushes to main
-  deploy-production:
-    name: Deploy Production
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment: production
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - run: npm install --global vercel@latest
-      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-      - run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
